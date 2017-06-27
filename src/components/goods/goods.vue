@@ -2,32 +2,32 @@
   <div class="goods">
     <div class="menu-wrapper" v-el:menu-wrapper>
       <ul>
-        <li v-for="item in goods" track-by="$index" class="menu-item" :class="currentIndex">
+        <li v-for="item in goods" class="menu-item" :class="{'current':currentIndex===$index}"
+            @click="selectMenu($index,$event)">
           <span class="text border-1px">
-            <span v-show="item.type > 0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
     <div class="foods-wrapper" v-el:foods-wrapper>
       <ul>
-        <li v-for="item in goods" track-by="$index" class="food-list food-list-hook">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item border-1px">
               <div class="icon">
-                <img :src="food.icon" alt="" width="57" height="57">
+                <img width="57" height="57" :src="food.icon">
               </div>
               <div class="content">
                 <h2 class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
-                  <span class="count">月售{{food.sellCount}}份</span>
-                  <span>好评率{{food.rating}}%</span>
+                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
                 </div>
                 <div class="price">
-                  <span class="new">￥{{food.price}}</span>
-                  <span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
+                  <span class="now">￥{{food.price}}</span>
+                  <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
               </div>
             </li>
@@ -35,11 +35,14 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
+  import shopcart from '../shopcart/shopcart.vue';
+
   const ERR_OK = 0;
   export default {
     props: {
@@ -50,7 +53,8 @@
     data() {
       return {
         goods: [],
-        listHeight: []
+        listHeight: [],
+        scrollY: 0
       };
     },
     computed: {
@@ -79,12 +83,25 @@
       });
     },
     methods: {
+      selectMenu(index, event) {
+        if (!event._constructed) {
+          return;
+        }
+        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+        let el = foodList[index];
+        this.foodsScroll.scrollToElement(el, 300);
+      },
       _initScroll() {
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {});
-        this.foodScroll = new BScroll(this.$els.foodsWrapper, {
+        this.meunScroll = new BScroll(this.$els.menuWrapper, {
+          click: true
+        });
+
+        this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
+          click: true,
           probeType: 3
         });
-        this.foodScroll.on('scroll', (pos) => {
+
+        this.foodsScroll.on('scroll', (pos) => {
           this.scrollY = Math.abs(Math.round(pos.y));
         });
       },
@@ -98,6 +115,9 @@
           this.listHeight.push(height);
         }
       }
+    },
+    components: {
+      shopcart
     }
   };
 </script>
