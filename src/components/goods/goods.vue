@@ -45,9 +45,9 @@
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
-  import shopcart from '../shopcart/shopcart.vue';
-  import cartcontrol from '../cartcontrol/cartcontrol.vue';
-  import food from '../food/food.vue';
+  import shopcart from 'components/shopcart/shopcart.vue';
+  import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+  import food from 'components/food/food.vue';
 
   const ERR_OK = 0;
   export default {
@@ -61,7 +61,7 @@
         goods: [],
         listHeight: [],
         scrollY: 0,
-        selected: {}
+        selectedFood: {}
       };
     },
     computed: {
