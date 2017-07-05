@@ -131,7 +131,6 @@
     filters: {
       formatDate (time) {
         let date = new Date(time);
-        console.log(date);
         return formatDate(date, 'yyyy-MM-dd hh:mm');
       }
     },
